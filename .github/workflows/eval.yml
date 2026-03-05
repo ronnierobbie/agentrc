@@ -51,7 +51,7 @@ jobs:
 
       - run: npm run build
 
-      - name: Install CopiI want to have a Kanban-style agent management UI that lets me move agents from queue to running to done. Wait, actually, I have already a plan. Let me just pull the plan in.lot CLI
+      - name: Install Copilot CLI
         run: npm install -g @github/copilot
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
@@ -79,6 +79,7 @@ jobs:
           THRESHOLD="${{ inputs.fail-threshold || '50' }}"
           ARGS="$ARGS --fail-level $THRESHOLD"
 
+          # shellcheck disable=SC2086
           node dist/index.js eval $ARGS 2>&1 | tee .agentrc/evals/eval.log
         env:
           GH_TOKEN: ${{ secrets.COPILOT_TOKEN }}
