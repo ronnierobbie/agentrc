@@ -120,7 +120,7 @@ export function runCli(argv: string[]): void {
 
   program
     .command("instructions")
-    .description("Generate root and per-area .instructions.md files")
+    .description("Generate root and per-area AI instruction files")
     .option("--repo <path>", "Repository path", process.cwd())
     .option("--output <path>", "Output path for copilot instructions")
     .option("--model <name>", "Model for instructions generation", DEFAULT_MODEL)

@@ -8,7 +8,7 @@
 > [!WARNING]
 > **Experimental** — This project is under active development. Expect breaking changes to commands, APIs, and output formats. Ready for early adopter feedback — [open an issue](https://github.com/microsoft/agentrc/issues).
 
-AgentRC is a CLI and VS Code extension that helps teams prepare repositories for AI-assisted development. It generates custom instructions, assesses AI readiness across a maturity model, and supports batch processing across organizations.
+AgentRC is a CLI and VS Code extension that primes repositories for AI-assisted development. It analyzes a repo, scores AI readiness across a 5-level maturity model, generates repo-specific instructions and AI configs, evaluates whether those instructions help, and supports the same workflow from a local repo to org-scale PR automation.
 
 ## Quick Start
 
@@ -25,17 +25,20 @@ Or install locally:
 git clone https://github.com/microsoft/agentrc.git
 cd agentrc && npm install && npm run build && npm link
 
-# 1. Check how AI-ready your repo is
+# 1. Inspect the repo shape
+agentrc analyze
+
+# 2. Check how AI-ready your repo is
 agentrc readiness
 
-# 2. Generate AI instructions
+# 3. Generate AI instructions
 agentrc instructions
 
-# 3. Generate MCP and VS Code configs
+# 4. Generate MCP and VS Code configs
 agentrc generate mcp
 agentrc generate vscode
 
-# Or do everything interactively
+# Or do the guided flow interactively
 agentrc init
 ```
 
@@ -227,25 +230,30 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for workflow and code style guidelines.
 ## Project Structure
 
 ```
+packages/core/
+└── src/
+  ├── index.ts          # Shared public API surface
+  ├── services/         # Core product logic reused by CLI and extension
+  │   ├── readiness.ts   # 9-pillar scoring engine with pillar groups
+  │   ├── visualReport.ts # HTML report generator
+  │   ├── instructions.ts # Copilot SDK integration
+  │   ├── analyzer.ts    # Repo scanning (languages, frameworks, monorepos)
+  │   ├── evaluator.ts   # Eval runner + trajectory viewer
+  │   ├── generator.ts   # MCP/VS Code config generation
+  │   ├── policy.ts      # Readiness policy loading and chain resolution
+  │   ├── policy/        # Plugin engine (types, compiler, loader, adapter, shadow)
+  │   ├── git.ts         # Git operations (clone, branch, push)
+  │   ├── github.ts      # GitHub API (Octokit)
+  │   └── azureDevops.ts # Azure DevOps API
+  └── utils/            # Shared utilities (fs, logger, output)
+
 src/
 ├── cli.ts                # Commander CLI wiring
 ├── commands/             # CLI subcommands (thin orchestrators)
-├── services/             # Core logic
-│   ├── readiness.ts       # 9-pillar scoring engine with pillar groups
-│   ├── visualReport.ts    # HTML report generator
-│   ├── instructions.ts    # Copilot SDK integration
-│   ├── analyzer.ts        # Repo scanning (languages, frameworks, monorepos)
-│   ├── evaluator.ts       # Eval runner + trajectory viewer
-│   ├── generator.ts       # MCP/VS Code config generation
-│   ├── policy.ts          # Readiness policy loading and chain resolution
-│   ├── policy/            # Plugin engine (types, compiler, loader, adapter, shadow)
-│   ├── git.ts             # Git operations (clone, branch, push)
-│   ├── github.ts          # GitHub API (Octokit)
-│   └── azureDevops.ts     # Azure DevOps API
-├── ui/                   # Ink/React terminal UI
-└── utils/                # Shared utilities (fs, logger, output)
+├── index.ts              # CLI entrypoint
+└── ui/                   # Ink/React terminal UI
 
-vscode-extension/         # VS Code extension (commands, tree views, webview)
+vscode-extension/         # VS Code extension shell over packages/core
 ```
 
 ## Troubleshooting

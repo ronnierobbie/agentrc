@@ -3,6 +3,7 @@
   "criteria": {
     "disable": [
       "custom-instructions",
+      "instructions-consistency",
       "mcp-config",
       "custom-agents",
       "copilot-skills",

@@ -1,29 +1,52 @@
 # AgentRC Examples
 
-This folder includes quick examples to help you get started.
+This folder is a small, self-contained set of examples for the most common AgentRC workflows. Use it as a reference when you want to bootstrap configuration, evaluate repository guidance, or customize readiness scoring.
 
-## CLI usage
+## What's here
+
+- `agentrc.config.json` shows a monorepo-style project configuration with workspaces, areas, and a linked readiness policy.
+- `agentrc.eval.json` shows a starter evaluation file for testing instruction quality against a small set of prompts.
+- `policies/` contains sample readiness policies you can use directly or copy and adapt.
+
+## Common workflows
 
 ```bash
-# Interactive setup
-agentrc init
+# Interactive setup for a repository
+agentrc init /path/to/repo
 
-# AI readiness report
+# Inspect a repository before generating config or instructions
+agentrc analyze /path/to/repo
+
+# Check AI readiness in the terminal
 agentrc readiness /path/to/repo
-agentrc readiness --visual
 
-# Generate instructions
+# Generate a visual readiness report
+agentrc readiness /path/to/repo --visual
+
+# Apply an example policy while scoring readiness
+agentrc readiness /path/to/repo --policy ./examples/policies/strict.json
+
+# Generate instructions with either command style
 agentrc instructions --repo /path/to/repo
+agentrc generate instructions /path/to/repo
 
 # Scaffold and run evals
 agentrc eval --init --repo /path/to/repo
-agentrc eval agentrc.eval.json --repo /path/to/repo
+agentrc eval ./examples/agentrc.eval.json --repo /path/to/repo
 ```
 
-## Sample eval config
+## How to use these examples
 
-See `agentrc.eval.json` for a starter eval config you can customize.
+Start with `agentrc analyze` if you want to understand how AgentRC sees the repository structure. Use `agentrc.config.json` as a reference when you need to model workspaces or define named areas, then use the policy examples to narrow or tighten readiness checks.
 
-## Sample project config
+If you are tuning repository instructions, begin with `agentrc eval --init` to scaffold cases, then use `agentrc.eval.json` as the shape to expand. The included file is intentionally small so it is easy to adapt to your own prompts and expectations.
 
-See `agentrc.config.json` for an example monorepo configuration with workspaces, areas, and policies.
+Use `agentrc instructions` when you want the dedicated instruction-generation workflow and its area-specific options. Use `agentrc generate instructions` when you prefer the shared `generate` entry point used for other AgentRC outputs.
+
+## Sample files
+
+`agentrc.config.json` is a good starting point for repositories that need area-level instruction generation or per-workspace readiness tracking.
+
+`agentrc.eval.json` is a starter eval config for comparing how well repository instructions help the model answer project-specific questions.
+
+See `policies/README.md` for details on the included readiness policies and how to compose them.
